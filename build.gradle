@@ -21,7 +21,7 @@ repositories {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
-group = "codechicken" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "net.covers1624" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ForcedDeobfuscator"
 
 targetCompatibility = "1.8"
@@ -97,8 +97,16 @@ artifacts {
 uploadArchives {
 	repositories {
 		mavenDeployer {
-			if (project.hasProperty("local_maven")) {
-				repository(url: "file://${local_maven}")
+			if (project.hasProperty("local_maven") || project.hasProperty("maven_pass")) {
+				if (project.hasProperty("maven_pass")) {
+					println "Uploading to remote maven."
+					repository(url: "http://maven_upload.covers1624.net/") {
+						authentication(userName: "covers1624", password: project.getProperty("maven_pass"))
+					}
+				} else {
+					println "Uploading to local maven."
+					repository(url: "file://${local_maven}")
+				}
 				pom {
 					groupId = project.group
 					// Force the maven upload to use the <mcversion>-<version> syntax preferred at files
